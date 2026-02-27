@@ -10,7 +10,7 @@ def getpolicy(Q):
     operations. It's possible to implement this in one line of code.
     """
 
-    P = None
+    P = np.argmax(Q, axis=2)
 
     return P
 
@@ -22,7 +22,7 @@ def getvalue(Q):
     operations. It's possible to implement this in one line of code.
     """
     
-    V = None
+    V = np.max(Q, axis=2)
 
     return V
 
