@@ -42,7 +42,7 @@ class ReplayBuffer:
         # TODO: Store the transition in the buffer.
         # Hint: Append a tuple (state, action, reward, next_state, done)
         # =====================================================================
-        raise NotImplementedError("Implement ReplayBuffer.push()")
+        self.buffer.append((state, action, reward, next_state, done))
 
     def sample(self, batch_size: int):
         """

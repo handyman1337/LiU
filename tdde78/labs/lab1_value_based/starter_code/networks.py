@@ -34,7 +34,13 @@ class DQNNetwork(nn.Module):
         #   - Linear layer: 120 -> 84
         #   - Linear layer: 84 -> action_dim
         # =====================================================================
-        raise NotImplementedError("Define DQNNetwork layers")
+        self.network = nn.Sequential(
+            nn.Linear(state_dim, 120),
+            nn.ReLU(),
+            nn.Linear(120, 84),
+            nn.ReLU(),
+            nn.Linear(84, action_dim)
+        )
 
     def forward(self, state):
         """
@@ -52,7 +58,7 @@ class DQNNetwork(nn.Module):
         # Pass the state through the layers with ReLU activations
         # between hidden layers. No activation on the output layer.
         # =====================================================================
-        raise NotImplementedError("Implement DQNNetwork.forward()")
+        return self.network(state)
 
 
 class DuelingDQNNetwork(nn.Module):
@@ -88,7 +94,22 @@ class DuelingDQNNetwork(nn.Module):
         #   2. Value stream: 128 -> 128 -> 1
         #   3. Advantage stream: 128 -> 128 -> action_dim
         # =====================================================================
-        raise NotImplementedError("Define DuelingDQNNetwork layers")
+        self.feature_layer = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU()
+        )
+
+        self.value_stream = nn.Sequential(
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1)
+        )
+
+        self.advantage_stream = nn.Sequential(
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, action_dim)
+        )
 
     def forward(self, state):
         """
@@ -112,4 +133,9 @@ class DuelingDQNNetwork(nn.Module):
         # The mean subtraction ensures that the advantage has zero mean,
         # making V(s) represent the true state value.
         # =====================================================================
-        raise NotImplementedError("Implement DuelingDQNNetwork.forward()")
+        features = self.feature_layer(state)
+        V = self.value_stream(features)
+        A = self.advantage_stream(features)
+
+        Q = V + (A - torch.mean(A, dim=1, keepdim=True)) #dim = 1 in order to take the mean over all actions for each state
+        return Q
