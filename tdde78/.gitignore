@@ -1,0 +1,22 @@
+# Course admin (not for students)
+labs/*/solution/
+LAB_INSTRUCTIONS.md
+exam_index.en.shtml
+
+# Experiment outputs
+labs/*/experiments/plots/
+labs/*/experiments/videos/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Results
+results/logs/
+results/checkpoints/
+results/figures/

@@ -1,0 +1,54 @@
+# =============================================================================
+# TDDE78 Deep Reinforcement Learning — Python Dependencies
+# Linköping University, Spring 2026
+# =============================================================================
+
+# ---------------------
+# Deep Learning
+# ---------------------
+torch>=2.2.0
+torchvision>=0.17.0
+
+# ---------------------
+# RL Environments
+# ---------------------
+gymnasium[classic-control,box2d,atari]>=1.0.0
+ale-py>=0.11.0
+pettingzoo[mpe]>=1.24.0
+supersuit>=3.9.0
+
+# ---------------------
+# Numerical Computing
+# ---------------------
+numpy>=1.26.0
+scipy>=1.12.0
+
+# ---------------------
+# Visualization
+# ---------------------
+matplotlib>=3.8.0
+seaborn>=0.13.0
+moviepy>=1.0.3
+
+# ---------------------
+# Data Analysis
+# ---------------------
+pandas>=2.2.0
+
+# ---------------------
+# Experiment Tracking
+# ---------------------
+tensorboard>=2.16.0
+wandb>=0.16.0
+
+# ---------------------
+# Jupyter
+# ---------------------
+jupyterlab>=4.1.0
+ipykernel>=6.29.0
+
+# ---------------------
+# Utilities
+# ---------------------
+tqdm>=4.66.0
+pyyaml>=6.0.0
