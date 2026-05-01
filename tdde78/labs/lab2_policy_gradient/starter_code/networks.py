@@ -47,7 +47,16 @@ class DiscreteActorCritic(nn.Module):
         #      (small std → nearly uniform initial policy)
         #   3. self.value_head  — Linear(64, 1),          initialized with std=1.0
         # =====================================================================
-        raise NotImplementedError("Define DiscreteActorCritic layers")
+        self.shared = nn.Sequential(
+            layer_init(nn.Linear(state_dim, 64)),
+            nn.Tanh(),
+            layer_init(nn.Linear(64, 64)),
+            nn.Tanh()
+        )
+        
+        self.policy_head = layer_init(nn.Linear(64, action_dim), std=0.01)
+        self.value_head = layer_init(nn.Linear(64, 1), std=1.0)
+
 
     def forward(self, state):
         """
@@ -63,7 +72,13 @@ class DiscreteActorCritic(nn.Module):
         # =====================================================================
         # TODO: Pass state through self.shared, then through each head.
         # =====================================================================
-        raise NotImplementedError("Implement DiscreteActorCritic.forward()")
+        features = self.shared(state)
+        
+        logits = self.policy_head(features)
+        value = self.value_head(features)
+        
+        return logits, value
+        
 
     def get_action(self, state, action=None):
         """
@@ -93,6 +108,13 @@ class DiscreteActorCritic(nn.Module):
         #             entropy  = dist.entropy()
         # 5. Return action, log_prob, entropy, value
         # =====================================================================
-        raise NotImplementedError("Implement DiscreteActorCritic.get_action()")
-
-
+        logits, value = self.forward(state)
+        
+        dist = Categorical(logits=logits)
+        if action is None:
+            action = dist.sample()
+            
+        log_prob = dist.log_prob(action)
+        entropy = dist.entropy()
+        
+        return action, log_prob, entropy, value
