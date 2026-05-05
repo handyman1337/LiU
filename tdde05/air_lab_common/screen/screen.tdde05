@@ -1,0 +1,63 @@
+# Configuration
+deflogin on
+autodetach off
+
+caption always
+
+bindkey ^w screen
+bindkey ^p prev
+bindkey ^n next
+bindkey ^x quit
+bind q quit
+bindkey ^l windowlist
+bindkey ^e copy
+
+# Pre-defined tabs
+
+screen 0
+title "simple sim"
+stuff "ros2 launch air_bringup turtle.launch.py world:=office_1\015"
+
+screen 2
+title "rviz"
+stuff "rviz2 -d $HOME/TDDE05/ros2_ws/src/labs/air_lab_common/rviz/default.rviz\015"
+
+screen 3
+title "rqt"
+stuff "rqt"
+
+screen 4
+title "undock"
+stuff "ros2 action send_goal /dock irobot_create_msgs/action/Undock {}"
+
+screen 5
+title "dock"
+stuff "ros2 action send_goal /dock irobot_create_msgs/action/Dock {}"
+
+screen 6
+title "move"
+stuff "ros2 action send_goal /navigate_to_position irobot_create_msgs/action/NavigateToPosition '{achieve_goal_heading: true,goal_pose:{pose:{position:{x: 3, y: 4,z: 0.0}, orientation:{x: 0.0,y: 0.0, z: 0.0, w: 1.0}}}}'"
+
+screen 7
+title "Start database"
+stuff "ros2 run ros_kdb kdb_server --ros-args -p db_port:=10103\015"
+
+screen 8
+title "Reset database"
+stuff "rm -rf $HOME/.ros_kdb/stores/"
+
+screen 9
+title "tst_executor"
+stuff "ros2 run air_lab3 tst_executor\015"
+
+screen 10
+title "VScode"
+stuff "code\015"
+
+screen 11
+title "text_to_goal"
+stuff "ros2 run air_lab5 text_to_goals_node\015"
+
+screen 12
+title "decision_node"
+stuff "ros2 run air_lab5 decision_node\015"
