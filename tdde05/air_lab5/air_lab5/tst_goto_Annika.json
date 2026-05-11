@@ -1,0 +1,16 @@
+{
+    "children": [
+        {
+            "name": "drive-to",
+            "params": {
+                "p": {
+                    "rostype": "Point",
+                    "x": -3.12,
+                    "y": -3.3,
+                    "z": 0
+                }
+            }
+        }
+    ],
+    "name": "seq"
+}
