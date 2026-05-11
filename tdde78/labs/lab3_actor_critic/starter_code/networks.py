@@ -65,7 +65,18 @@ class ContinuousActorCritic(nn.Module):
         #   4. self.log_std — nn.Parameter(torch.zeros(action_dim))
         #      (a learnable log std parameter, independent of state)
         # =====================================================================
-        raise NotImplementedError("Define ContinuousActorCritic layers")
+        self.shared = nn.Sequential(
+            layer_init(nn.Linear(state_dim, 256)),
+            nn.Tanh(),
+            layer_init(nn.Linear(256, 256)),
+            nn.Tanh()
+        )
+        
+        self.actor_mean = layer_init(nn.Linear(256, action_dim), std=0.01)
+        
+        self.critic = layer_init(nn.Linear(256, 1), std=1.0)
+        
+        self.log_std = nn.Parameter(torch.zeros(action_dim))
 
     def forward(self, state):
         """
@@ -82,7 +93,12 @@ class ContinuousActorCritic(nn.Module):
         # TODO: Pass state through self.shared, then through each head.
         #       Return (mean, value).
         # =====================================================================
-        raise NotImplementedError("Implement ContinuousActorCritic.forward()")
+        state = self.shared(state)
+        
+        mean = self.actor_mean(state)
+        value = self.critic(state)
+        
+        return mean, value
 
     def get_action(self, state, action=None):
         """
@@ -117,7 +133,19 @@ class ContinuousActorCritic(nn.Module):
         #      entropy = dist.entropy().sum(dim=-1)           # sum over action dims
         # 7. Return action, log_prob, entropy, value
         # =====================================================================
-        raise NotImplementedError("Implement ContinuousActorCritic.get_action()")
+        mean, value = self.forward(state)
+        
+        std = self.log_std.exp().expand_as(mean)
+        
+        dist = Normal(mean, std)
+        
+        if action is None:
+            action = dist.sample()
+            
+        log_prob = dist.log_prob(action).sum(dim=-1)
+        entropy = dist.entropy().sum(dim=-1)
+        
+        return action, log_prob, entropy, value
 
 
 # =============================================================================
@@ -158,7 +186,15 @@ class SACActor(nn.Module):
         #   2. self.mean_head    — Linear(256, action_dim)
         #   3. self.log_std_head — Linear(256, action_dim)
         # =====================================================================
-        raise NotImplementedError("Define SACActor layers")
+        self.net = nn.Sequential(
+            nn.Linear(state_dim,256),
+            nn.ReLU(),
+            nn.Linear(256, 256),
+            nn.ReLU()
+        )
+        
+        self.mean_head = nn.Linear(256, action_dim)
+        self.log_std_head = nn.Linear(256, action_dim)
 
     def forward(self, state):
         """
@@ -175,7 +211,14 @@ class SACActor(nn.Module):
         # TODO: Pass state through self.net, then through each head.
         #       Clamp log_std to [LOG_STD_MIN, LOG_STD_MAX].
         # =====================================================================
-        raise NotImplementedError("Implement SACActor.forward()")
+        state = self.net(state)
+        
+        mean = self.mean_head(state)
+        
+        log_std = self.log_std_head(state)
+        log_std = torch.clamp(log_std, min=LOG_STD_MIN, max=LOG_STD_MAX)
+        
+        return mean, log_std
 
     def get_action(self, state):
         """
@@ -204,7 +247,20 @@ class SACActor(nn.Module):
         #    (This is the numerically stable form of: -log(1 - tanh²(x_t) + ε))
         # 7. Return action, log_prob
         # =====================================================================
-        raise NotImplementedError("Implement SACActor.get_action()")
+        mean, log_std = self.forward(state)
+        
+        std = log_std.exp()
+        
+        dist = Normal(mean, std)
+        
+        x_t = dist.rsample()
+        
+        action = torch.tanh(x_t)
+        
+        log_prob = dist.log_prob(x_t).sum(dim=-1)
+        log_prob -= (2 * (np.log(2) - x_t - F.softplus(-2 * x_t))).sum(dim=-1)
+        
+        return action, log_prob
 
 
 class SACCritic(nn.Module):
@@ -234,7 +290,21 @@ class SACCritic(nn.Module):
         #
         #   2. self.q2 — second Q-network with the SAME architecture (independent)
         # =====================================================================
-        raise NotImplementedError("Define SACCritic twin Q-networks")
+        self.q1 = nn.Sequential(
+            nn.Linear(state_dim + action_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 256),
+            nn.ReLU(),
+            nn.Linear(256, 1)
+        )
+        
+        self.q2 = nn.Sequential(
+            nn.Linear(state_dim + action_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 256),
+            nn.ReLU(),
+            nn.Linear(256, 1)
+        )
 
     def forward(self, state, action):
         """
@@ -256,4 +326,7 @@ class SACCritic(nn.Module):
         #   q2 = self.q2(sa)
         #   return q1, q2
         # =====================================================================
-        raise NotImplementedError("Implement SACCritic.forward()")
+        sa = torch.cat([state, action], dim=-1)
+        q1 = self.q1(sa)
+        q2 = self.q2(sa)
+        return q1, q2
