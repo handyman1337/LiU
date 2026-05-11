@@ -60,18 +60,9 @@ class WorldModel(nn.Module):
         self.action_dim = action_dim
         in_dim = state_dim + action_dim
 
-        # =====================================================================
-        # TODO: Define the network layers.
-        #
-        # Suggested architecture:
-        #   self.trunk = nn.Sequential(
-        #       nn.Linear(in_dim, 256), nn.ReLU(),
-        #       nn.Linear(256, 256),    nn.ReLU(),
-        #   )
-        #   self.delta_head  = nn.Linear(256, state_dim)  # predicts Δs = s' - s
-        #   self.reward_head = nn.Linear(256, 1)
-        #   self.done_head   = nn.Linear(256, 1)          # binary logit
-        # =====================================================================
+        # TODO: Define a shared trunk (two hidden layers with ReLU) and three
+        # output heads: one for next-state prediction, one for reward, and one
+        # for the done signal (binary logit).
         raise NotImplementedError("Implement WorldModel.__init__()")
 
     def forward(self, state, action_onehot):
@@ -85,15 +76,7 @@ class WorldModel(nn.Module):
             reward     (FloatTensor): (batch,)
             done_logit (FloatTensor): (batch,)  — sigmoid gives done probability
         """
-        # =====================================================================
-        # TODO: Implement the forward pass.
-        #
-        # Steps:
-        # 1. x = torch.cat([state, action_onehot], dim=-1)
-        # 2. h = self.trunk(x)
-        # 3. next_state = state + self.delta_head(h)   # residual prediction
-        # 4. reward     = self.reward_head(h).squeeze(-1)
-        # 5. done_logit = self.done_head(h).squeeze(-1)
-        # 6. return next_state, reward, done_logit
-        # =====================================================================
+        # TODO: Concatenate state and action_onehot, pass through the trunk,
+        # then apply each head. Next-state is a residual prediction (Δs + s).
+        # Return (next_state, reward, done_logit).
         raise NotImplementedError("Implement WorldModel.forward()")
