@@ -8,6 +8,7 @@ Linköping University, Spring 2026
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class QNetwork(nn.Module):
@@ -63,7 +64,18 @@ class WorldModel(nn.Module):
         # TODO: Define a shared trunk (two hidden layers with ReLU) and three
         # output heads: one for next-state prediction, one for reward, and one
         # for the done signal (binary logit).
-        raise NotImplementedError("Implement WorldModel.__init__()")
+        
+        #I chose 128 features for all layers here because Q-network defined above has the same amount
+        self.shared_trunk = nn.Sequential(
+            nn.Linear(in_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 128),
+            nn.ReLU()
+        )
+        self.next_state_head = nn.Linear(128, state_dim) #logits over next states
+        self.reward_head = nn.Linear(128, 1) #scalar reward
+        self.done_head = nn.Linear(128, 1) #binary logit
+        
 
     def forward(self, state, action_onehot):
         """
@@ -79,4 +91,15 @@ class WorldModel(nn.Module):
         # TODO: Concatenate state and action_onehot, pass through the trunk,
         # then apply each head. Next-state is a residual prediction (Δs + s).
         # Return (next_state, reward, done_logit).
-        raise NotImplementedError("Implement WorldModel.forward()")
+        x = torch.cat([state, action_onehot], dim=1) #concat cols
+        features = self.shared_trunk(x)
+        
+        #I tried doing Δs + s here but that broke training. I imagine it might be because
+        #adding one-hot encoded states skews the logits outputed from the next_state_head.
+        next_state = self.next_state_head(features)
+        
+        #Pass features through heads to get reward and done_logit
+        reward = self.reward_head(features).squeeze(-1)
+        done_logit = self.done_head(features).squeeze(-1)
+        
+        return next_state, reward, done_logit
