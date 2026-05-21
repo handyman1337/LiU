@@ -107,7 +107,12 @@ class CentralizedCritic(nn.Module):
         #       layer_init(nn.Linear(128, 1), std=1.0),
         #   )
         # =====================================================================
-        raise NotImplementedError("Implement CentralizedCritic.__init__()")
+        joint_dim = obs_dim * n_agents
+        self.net = nn.Sequential(
+            layer_init(nn.Linear(joint_dim, 128)), nn.Tanh(),
+            layer_init(nn.Linear(128, 128)), nn.Tanh(),
+            layer_init(nn.Linear(128, 1), std=1.0)
+        )
 
     def forward(self, joint_obs):
         """
@@ -121,7 +126,7 @@ class CentralizedCritic(nn.Module):
         # TODO: Implement the forward pass.
         #   return self.net(joint_obs)
         # =====================================================================
-        raise NotImplementedError("Implement CentralizedCritic.forward()")
+        return self.net(joint_obs)
 
 
 # =============================================================================
