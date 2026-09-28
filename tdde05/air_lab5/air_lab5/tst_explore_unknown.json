@@ -1,0 +1,12 @@
+{
+    "children": [
+        {
+            "name": "explore",
+            "params": {
+                "radius": 10.0,
+                "count": 8
+            }
+        }
+    ],
+    "name": "seq"
+}

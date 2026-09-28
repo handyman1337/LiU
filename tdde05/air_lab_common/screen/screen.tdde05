@@ -1,0 +1,72 @@
+# Configuration
+deflogin on
+autodetach off
+
+caption always
+
+bindkey ^w screen
+bindkey ^p prev
+bindkey ^n next
+bindkey ^x quit
+bind q quit
+bindkey ^l windowlist
+bindkey ^e copy
+
+# Pre-defined tabs
+
+screen 1
+title "simple sim project preload"
+stuff "env LD_PRELOAD=/lib/x86_64-linux-gnu/libpython3.10.so.1.0 ros2 launch air_bringup turtle.launch.py world:=office_2 slam:=true nav2_params_file:=/home/arviv790/TDDE05/ros2_ws/src/labs/nav2_human.yaml\015"
+
+screen 2
+title "rviz"
+stuff "rviz2 -d $HOME/TDDE05/ros2_ws/src/labs/air_lab_common/rviz/default.rviz\015"
+
+screen 3
+title "rqt"
+stuff "rqt"
+
+screen 4
+title "Start database"
+stuff "ros2 run ros_kdb kdb_server --ros-args -p db_port:=10103\015"
+
+screen 5
+title "Reset database"
+stuff "rm -rf $HOME/.ros_kdb/stores/"
+
+screen 6
+title "undock"
+stuff "ros2 action send_goal /dock irobot_create_msgs/action/Undock {}"
+
+screen 7
+title "dock"
+stuff "ros2 action send_goal /dock irobot_create_msgs/action/Dock {}"
+
+screen 8
+title "move"
+stuff "ros2 action send_goal /navigate_to_position irobot_create_msgs/action/NavigateToPosition '{achieve_goal_heading: true,goal_pose:{pose:{position:{x: 3, y: 4,z: 0.0}, orientation:{x: 0.0,y: 0.0, z: 0.0, w: 1.0}}}}'"
+
+screen 9
+title "tst_executor"
+stuff "ros2 run air_lab3 tst_executor"
+
+screen 10
+title "text_to_goal"
+stuff "ros2 run air_lab5 text_to_goals_node"
+
+screen 11
+title "decision_node"
+stuff "ros2 run air_lab5 decision_node"
+
+screen 12
+title "whatever1"
+stuff ""
+
+screen 13
+title "whatever2"
+stuff ""
+
+screen 14
+title "whatever3"
+stuff ""
+
