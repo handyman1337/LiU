@@ -1,0 +1,2 @@
+Zero-shot accuracy: 0.4968
+F1-Score: 0.4298

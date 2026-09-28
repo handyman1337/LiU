@@ -1,0 +1,12 @@
+Accuracy: 73.55901189387009% 
+F1-Score: 72.19108756161738%
+
+for p in model.parameters():
+    p.requires_grad = False
+
+for p in model.visual.transformer.resblocks[-1].parameters():
+    p.requires_grad = True
+
+model.visual.proj.requires_grad = True
+model.text_projection.requires_grad = True
+model.logit_scale.requires_grad = True

@@ -1,0 +1,42 @@
+Training:
+
+    Epoch 1: train loss=0.5301, val loss=2.2797
+    Saved best model
+    Epoch 2: train loss=0.3971, val loss=2.3858
+    Epoch 3: train loss=0.3392, val loss=2.4294
+    Epoch 4: train loss=0.2843, val loss=2.4951
+    Epoch 5: train loss=0.2458, val loss=2.5610
+    Epoch 6: train loss=0.2297, val loss=2.5676
+    Epoch 7: train loss=0.1978, val loss=2.6214
+    Epoch 8: train loss=0.1894, val loss=2.7062
+    Epoch 9: train loss=0.1759, val loss=2.6596
+    Epoch 10: train loss=0.1766, val loss=2.6690
+
+Testing:
+
+Zero-shot accuracy: 0.7228
+
+Hyperparameters:
+
+    10 Epochs
+    Standard
+
+Freezed layers:
+
+    for p in model.parameters():
+        p.requires_grad = False
+
+    model.visual.proj.requires_grad = True
+    model.text_projection.requires_grad = True
+    model.logit_scale.requires_grad = True
+
+
+    for p in model.visual.transformer.resblocks[-1].parameters():
+
+        p.requires_grad = True
+
+    for p in model.transformer.resblocks[-1].parameters():
+
+        p.requires_grad = True
+
+Analyzation:
