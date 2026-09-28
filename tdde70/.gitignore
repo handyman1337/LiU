@@ -1,0 +1,13 @@
+# datasets (public, can be found online if you want to run the code yourself)
+lab0/data/
+GTAV.zip
+lab1/GTAV
+lab2/datasets/
+Lab3/coll_xyz/
+
+# model weights/checkpoints
+*.pt
+
+# jupyter trash
+.ipynb_checkpoints
+
